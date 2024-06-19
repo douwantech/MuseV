@@ -21,8 +21,7 @@ class Predictor(BasePredictor):
             else:
                 print("Failed to clone the repository.")
 
-    def predict(
-        self,
+    def predict( self,
         image_input: str = Input(description="Image URL")  # 修改为str类型
     ) -> Path:
         """Run a single prediction on the model"""
@@ -55,12 +54,12 @@ class Predictor(BasePredictor):
         # 创建新的data.yaml文件内容
         data = [{
             "condition_images": image_path,
-            "eye_blinks_factor": 1.8,
+            "eye_blinks_factor": 1.2,
             "height": height,
             "img_length_ratio": 0.957,
             "ipadapter_image": image_path,
             "name": unique_id,
-            "prompt": "(masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3)",
+            "prompt": "(masterpiece, best quality, highres:1),(human, solo:1),(eye blinks:1.2),(head wave:1.8)",
             "refer_image": image_path,
             "video_path": None,
             "width": width
@@ -86,7 +85,7 @@ class Predictor(BasePredictor):
             "--target_datas", unique_id,
             "--vision_clip_extractor_class_name", "ImageClipVisionFeatureExtractor",
             "--vision_clip_model_path", "./checkpoints/IP-Adapter/models/image_encoder",
-            "--time_size", "12",
+            "--time_size", "60",
             "--fps", "12"
         ]
 
@@ -106,3 +105,10 @@ class Predictor(BasePredictor):
                 return Path(new_mp4_path)
 
         return Path("/src/output")
+
+def test():
+    p = Predictor()
+    p.setup()
+    p.predict(image_input="https://general-api.oss-cn-hangzhou.aliyuncs.com/static/2.jpg")
+
+#test()
