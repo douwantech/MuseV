@@ -132,3 +132,4 @@ outputs/
 results/
 scripts/codetest/
 # configs/train/video_creation_anchorxia_*
+.cog/*

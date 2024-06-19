@@ -104,6 +104,8 @@ build:
      - cuid
      - spaces
      - basicsr
+     - pyyaml
+     - pillow
 
   # commands run after the environment is setup
   run:
@@ -117,17 +119,9 @@ build:
       - mim install "mmcv>=2.0.1" 
       - mim install "mmdet>=3.1.0" 
       - mim install "mmpose>=1.1.0" 
-      - git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
       - git config --global --add safe.directory /src/MMCM
       - git config --global --add safe.directory /src/controlnet_aux
       - git config --global --add safe.directory /src/diffusers
-      - git submodule update --init --recursive
-      - export PYTHONPATH=/src
-      - export PYTHONPATH=${PYTHONPATH}:/src/MMCM
-      - export PYTHONPATH=${PYTHONPATH}:/src/diffusers/src
-      - export PYTHONPATH=${PYTHONPATH}:/src/controlnet_aux/src
-      - pip install pyyaml
-      - pip install pillow
 
 # predict.py defines how predictions are run on your model
 predict: "predict.py:Predictor"

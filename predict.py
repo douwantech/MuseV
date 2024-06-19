@@ -9,12 +9,21 @@ from io import BytesIO
 
 class Predictor(BasePredictor):
     def setup(self) -> None:
-        """Load the model into memory to make running multiple predictions efficient"""
-        # self.model = torch.load("./weights.pth")
+        checkpoints_dir = "./checkpoints"
+        
+        if os.path.exists(checkpoints_dir):
+            print("Checkpoints directory already exists. Skipping clone.")
+        else:
+            command = ["git", "clone", "https://huggingface.co/TMElyralab/MuseV", checkpoints_dir]
+            result = subprocess.run(command, check=False)
+            if result.returncode == 0:
+                print("Repository cloned successfully.")
+            else:
+                print("Failed to clone the repository.")
 
     def predict(
         self,
-        condition_images: str = Input(description="Image URL")  # 修改为str类型
+        image_input: str = Input(description="Image URL")  # 修改为str类型
     ) -> Path:
         """Run a single prediction on the model"""
         # 生成一个唯一的UUID
@@ -25,7 +34,7 @@ class Predictor(BasePredictor):
         os.makedirs(results_dir, exist_ok=True)
 
         # 下载condition_images并确定文件后缀
-        response = requests.get(condition_images)
+        response = requests.get(image_input)
         content_type = response.headers['Content-Type']
         if 'image/jpeg' in content_type:
             suffix = 'jpg'
@@ -61,6 +70,8 @@ class Predictor(BasePredictor):
         data_yaml_path = os.path.join(results_dir, "data.yaml")
         with open(data_yaml_path, "w") as file:
             yaml.dump(data, file)
+
+        os.environ['PYTHONPATH'] = '/src:/src/MMCM:/src/diffusers/src:/src/controlnet_aux/src'
 
         # 定义命令及其参数
         command = [
